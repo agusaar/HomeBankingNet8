@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
+using WebApplication1.Repositories.implementation;
+using WebApplication1.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ builder.Services.AddRazorPages();
 //Agrego contexto de la BD
 builder.Services.AddDbContext<HomeBankingContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("HomeBankingConexion")));
+
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
 var app = builder.Build();
 
@@ -39,5 +43,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.MapControllers();
 
 app.Run();

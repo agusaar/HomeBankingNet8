@@ -15,8 +15,23 @@
                 };
 
                 context.Clients.AddRange(clients);
-
                 context.SaveChanges();
+            }
+
+            if (!context.Account.Any())
+            {
+                var accountAgus = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
+                if (accountAgus != null)
+                {
+                    var accounts = new Account[]
+                    {
+                        new Account {ClientId = accountAgus.Id, CreationDate = DateTime.Now, Number = "VIN001", Balance = 1000 },
+                        new Account {ClientId = accountAgus.Id, CreationDate = DateTime.Now, Number = "VIN002", Balance = 25000 }
+                    };
+                    context.Account.AddRange(accounts);
+                    context.SaveChanges();
+
+                }
             }
         }
     }
