@@ -31,30 +31,18 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("{id}")]
-
         public IActionResult Get(long id)
-
         {
-
             try
-
             {
-
                 var client = _clientRepository.FindById(id);
-
                 if (client == null)
                 {
-
                     return NotFound();
-
                 }
-
                 var clientDTO = new ClientDTO(client);
-
                 return Ok(clientDTO);
-
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
