@@ -2,7 +2,7 @@
 
 namespace HomeBankingNet8.DTOs
 {
-    public class AccountDTO
+    public class AccountClientDTO
     {
         public long Id { get; set; }
 
@@ -12,14 +12,12 @@ namespace HomeBankingNet8.DTOs
 
         public double Balance { get; set; }
 
-        public ICollection<TransactionDTO> Transactions { get; set; }
-        public AccountDTO(Account ac)
+        public AccountClientDTO(Account ac)
         {
             Id = ac.Id;
             Number = ac.Number;
             CreationDate = ac.CreationDate;
             Balance = ac.Balance;
-            Transactions = ac.Transactions.Select(tr => new TransactionDTO(tr)).ToList();
         }
     }
 }

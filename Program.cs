@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
-using WebApplication1.Repositories.implementation;
-using WebApplication1.Repositories;
+using HomeBankingNet8.Models;
+using HomeBankingNet8.Repositories.implementation;
+using HomeBankingNet8.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,8 @@ builder.Services.AddDbContext<HomeBankingContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HomeBankingConexion")));
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
+
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 var app = builder.Build();
 

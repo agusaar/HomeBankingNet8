@@ -1,6 +1,6 @@
-﻿using WebApplication1.Models;
+﻿using HomeBankingNet8.Models;
 
-namespace WebApplication1.Repositories
+namespace HomeBankingNet8.Repositories
 {
     public interface IClientRepository
     {

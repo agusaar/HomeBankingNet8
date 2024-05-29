@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Models
+﻿namespace HomeBankingNet8.Models
 {
     public class Client
     {

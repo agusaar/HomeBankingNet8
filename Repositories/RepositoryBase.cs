@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using WebApplication1.Models;
+using HomeBankingNet8.Models;
 
-namespace WebApplication1.Repositories
+namespace HomeBankingNet8.Repositories
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {

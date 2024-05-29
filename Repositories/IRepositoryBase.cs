@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace WebApplication1.Repositories
+namespace HomeBankingNet8.Repositories
 {
     public interface IRepositoryBase<T>
     {

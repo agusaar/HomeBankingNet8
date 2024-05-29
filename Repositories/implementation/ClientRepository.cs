@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
+using HomeBankingNet8.Models;
 
-namespace WebApplication1.Repositories.implementation
+namespace HomeBankingNet8.Repositories.implementation
 {
     public class ClientRepository: RepositoryBase<Client>, IClientRepository
     {

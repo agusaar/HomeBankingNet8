@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Models
+﻿namespace HomeBankingNet8.Models
 {
     public class Account
     {
@@ -13,5 +13,7 @@
         public Client Client { get; set; }
 
         public long ClientId { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

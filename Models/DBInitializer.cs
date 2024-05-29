@@ -1,4 +1,6 @@
-﻿namespace WebApplication1.Models
+﻿using HomeBankingNet8.Utils;
+
+namespace HomeBankingNet8.Models
 {
     public class DBInitializer
     {
@@ -31,6 +33,22 @@
                     context.Account.AddRange(accounts);
                     context.SaveChanges();
 
+                }
+            }
+
+            if (!context.Transactions.Any())
+            {
+                var account1 = context.Account.FirstOrDefault(c => c.Number == "VIN001");
+                if (account1 != null)
+                {
+                    var transactions = new Transaction[]
+                    {
+                        new Transaction { AccountId= account1.Id, Amount = 10000, CreationDate= DateTime.Now, Description = "Coca-Cola Botella de Vidrio", Type = TransactionType.CREDIT },
+                        new Transaction { AccountId= account1.Id, Amount = -2000, CreationDate= DateTime.Now, Description = "Coca-Cola en lata", Type = TransactionType.DEBIT },
+                        new Transaction { AccountId= account1.Id, Amount = -3000, CreationDate= DateTime.Now, Description = "Coca-Cola en botella de LEVITE", Type = TransactionType.DEBIT },
+                    };
+                    context.Transactions.AddRange(transactions);
+                    context.SaveChanges();
                 }
             }
         }

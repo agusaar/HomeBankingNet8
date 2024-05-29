@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace WebApplication1.Migrations
+namespace HomeBankingNet8.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

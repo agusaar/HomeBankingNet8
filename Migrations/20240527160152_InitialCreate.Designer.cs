@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebApplication1.Models;
+using HomeBankingNet8.Models;
 
 #nullable disable
 
-namespace WebApplication1.Migrations
+namespace HomeBankingNet8.Migrations
 {
     [DbContext(typeof(HomeBankingContext))]
     [Migration("20240527160152_InitialCreate")]
@@ -24,7 +24,7 @@ namespace WebApplication1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApplication1.Models.Client", b =>
+            modelBuilder.Entity("HomeBankingNet8.Models.Client", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()

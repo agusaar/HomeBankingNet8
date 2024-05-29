@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using WebApplication1.Models;
+using HomeBankingNet8.Models;
 
-namespace WebApplication1.DTOs
+namespace HomeBankingNet8.DTOs
 {
     public class ClientDTO
     {
@@ -14,7 +14,7 @@ namespace WebApplication1.DTOs
 
         public string Email { get; set; }
 
-        public ICollection<AccountDTO> Accounts { get; set; }
+        public ICollection<AccountClientDTO> Accounts { get; set; }
 
         public ClientDTO(Client c)
         {
@@ -22,7 +22,7 @@ namespace WebApplication1.DTOs
             FirstName = c.FirstName;
             LastName = c.LastName;
             Email = c.Email;
-            Accounts = c.Accounts.Select(ac => new AccountDTO(ac)).ToList();
+            Accounts = c.Accounts.Select(ac => new AccountClientDTO(ac)).ToList();
         }
     }
 }

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebApplication1.Models;
+using HomeBankingNet8.Models;
 
 #nullable disable
 
-namespace WebApplication1.Migrations
+namespace HomeBankingNet8.Migrations
 {
     [DbContext(typeof(HomeBankingContext))]
     [Migration("20240528151042_Add-Account-Utility")]
@@ -25,7 +25,7 @@ namespace WebApplication1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApplication1.Models.Account", b =>
+            modelBuilder.Entity("HomeBankingNet8.Models.Account", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("Account");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Client", b =>
+            modelBuilder.Entity("HomeBankingNet8.Models.Client", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,9 +77,9 @@ namespace WebApplication1.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Account", b =>
+            modelBuilder.Entity("HomeBankingNet8.Models.Account", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Client", "Client")
+                    b.HasOne("HomeBankingNet8.Models.Client", "Client")
                         .WithMany("Accounts")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -88,7 +88,7 @@ namespace WebApplication1.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Client", b =>
+            modelBuilder.Entity("HomeBankingNet8.Models.Client", b =>
                 {
                     b.Navigation("Accounts");
                 });
