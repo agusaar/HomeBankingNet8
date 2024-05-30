@@ -6,6 +6,15 @@ namespace HomeBankingNet8.Models
     {
         public static void initialize(HomeBankingContext context)
         {
+
+            InitializeClients(context);
+            InitializeAccounts(context);
+            InitializeTransactions(context);
+            InitializeLoans(context);
+        }
+
+        private static void InitializeClients(HomeBankingContext context) {
+
             if (!context.Clients.Any())
             {
                 var clients = new Client[]
@@ -19,9 +28,11 @@ namespace HomeBankingNet8.Models
                 context.Clients.AddRange(clients);
                 context.SaveChanges();
             }
+        }
 
-            if (!context.Account.Any())
-            {
+        private static void InitializeAccounts(HomeBankingContext context){
+
+            if (!context.Account.Any()){
                 var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
                 if (client != null)
                 {
@@ -48,11 +59,42 @@ namespace HomeBankingNet8.Models
                     context.SaveChanges();
 
                 }
-            }
 
+                client = null;
+                client = context.Clients.FirstOrDefault(c => c.Email == "laura@gmail.com");
+                if (client != null)
+                {
+                    var accounts = new Account[]
+                    {
+                        new Account {ClientId = client.Id, CreationDate = DateTime.Now.AddDays(-2), Number = "VIN006", Balance = 1500 },
+                        new Account {ClientId = client.Id, CreationDate = DateTime.Now.AddDays(-23), Number = "VIN018", Balance = 20000 }
+                    };
+                    context.Account.AddRange(accounts);
+                    context.SaveChanges();
+
+                }
+
+                client = null;
+                client = context.Clients.FirstOrDefault(c => c.Email == "javier@gmail.com");
+                if (client != null)
+                {
+                    var accounts = new Account[]
+                    {
+                        new Account {ClientId = client.Id, CreationDate = DateTime.Now.AddDays(-487), Number = "VIN324", Balance = 1245 },
+                        new Account {ClientId = client.Id, CreationDate = DateTime.Now.AddDays(-95), Number = "VIN706", Balance = 100000 }
+                    };
+                    context.Account.AddRange(accounts);
+                    context.SaveChanges();
+
+                }
+            }
+        }
+
+        private static void InitializeTransactions(HomeBankingContext context) {
+            
             if (!context.Transactions.Any())
             {
-                var account = context.Account.FirstOrDefault(c => c.Number == "VIN103");
+                var account = context.Account.FirstOrDefault(c => c.Number == "VIN002");
                 if (account != null)
                 {
                     var transactions = new Transaction[]
@@ -80,7 +122,9 @@ namespace HomeBankingNet8.Models
                 }
 
             }
+        }
 
+        private static void InitializeLoans(HomeBankingContext context){ 
             if (!context.Loans.Any())
             {
                 var loans = new Loan[]
