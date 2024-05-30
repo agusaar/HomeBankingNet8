@@ -78,6 +78,66 @@ namespace HomeBankingNet8.Models
                     context.Transactions.AddRange(transactions);
                     context.SaveChanges();
                 }
+
+            }
+
+            if (!context.Loans.Any())
+            {
+                var loans = new Loan[]
+                {
+                        new Loan { Name = "Estudiantil", MaxAmount = 500000, Payments = "12,24,36,48,60" },
+                        new Loan { Name = "Agricola", MaxAmount = 1000000, Payments = "6,12,24" },
+                        new Loan { Name = "Automotriz", MaxAmount = 300000, Payments = "6,12,24,36" },
+                };
+
+                context.Loans.AddRange(loans);
+                context.SaveChanges();
+                var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
+                if (client != null)
+                {
+                    var loan = context.Loans.FirstOrDefault(l => l.Name == "Estudiantil");
+                    if (loan != null)
+                    {
+                        var clientLoan1 = new ClientLoan
+                        {
+                            Amount = 400000,
+                            ClientId = client.Id,
+                            LoanId = loan.Id,
+                            Payments = "36"
+                        };
+                        context.ClientLoans.Add(clientLoan1);
+                    }
+
+                    loan = null;
+                    loan = context.Loans.FirstOrDefault(l => l.Name == "Agricola");
+                    if (loan != null)
+                    {
+                        var clientLoan2 = new ClientLoan
+                        {
+                            Amount = 900000,
+                            ClientId = client.Id,
+                            LoanId = loan.Id,
+                            Payments = "24"
+                        };
+                        context.ClientLoans.Add(clientLoan2);
+                    }
+
+                    loan = null;
+                    loan = context.Loans.FirstOrDefault(l => l.Name == "Automotriz");
+                    if (loan != null)
+                    {
+                        var clientLoan3 = new ClientLoan
+                        {
+                            Amount = 100000,
+                            ClientId = client.Id,
+                            LoanId = loan.Id,
+                            Payments = "36"
+                        };
+                        context.ClientLoans.Add(clientLoan3);
+                    }
+                    context.SaveChanges();
+                }
+
             }
         }
     }
