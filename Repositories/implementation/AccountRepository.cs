@@ -1,4 +1,5 @@
 ﻿using HomeBankingNet8.Models;
+using HomeBankingNet8.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeBankingNet8.Repositories.implementation
@@ -19,6 +20,11 @@ namespace HomeBankingNet8.Repositories.implementation
             return FindAll()
                 .Include(acc => acc.Transactions)
                 .ToList();
+        }
+        public void Save(Account acc)
+        {
+            Create(acc);
+            SaveChanges();
         }
     }
 }

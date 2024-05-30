@@ -10,7 +10,7 @@ namespace HomeBankingNet8.DTOs
 
         public double Amount { get; set; }
 
-        public DateTime date { get; set; }
+        public DateTime Date { get; set; }
 
         public string Description { get; set; }
 
@@ -19,7 +19,7 @@ namespace HomeBankingNet8.DTOs
             Id = tr.Id;
             Type = tr.Type;
             Amount = tr.Amount;
-            date = tr.CreationDate;
+            Date = tr.Date;
             Description = tr.Description;
         }
     }

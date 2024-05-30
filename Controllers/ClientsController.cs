@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HomeBankingNet8.DTOs;
-using HomeBankingNet8.Repositories;
+using HomeBankingNet8.Repositories.Interfaces;
 
 namespace HomeBankingNet8.Controllers
 {

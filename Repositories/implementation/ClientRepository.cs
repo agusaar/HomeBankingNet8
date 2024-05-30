@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using HomeBankingNet8.Models;
+using HomeBankingNet8.Repositories.Interfaces;
 
 namespace HomeBankingNet8.Repositories.implementation
 {

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using HomeBankingNet8.Models;
 using HomeBankingNet8.Repositories.implementation;
-using HomeBankingNet8.Repositories;
+using HomeBankingNet8.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

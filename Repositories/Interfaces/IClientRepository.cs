@@ -1,6 +1,6 @@
 ﻿using HomeBankingNet8.Models;
 
-namespace HomeBankingNet8.Repositories
+namespace HomeBankingNet8.Repositories.Interfaces
 {
     public interface IClientRepository
     {
