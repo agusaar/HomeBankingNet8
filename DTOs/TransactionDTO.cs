@@ -6,7 +6,7 @@ namespace HomeBankingNet8.DTOs
     public class TransactionDTO
     {
         public long Id { get; set; }
-        public TransactionType Type { get; set; }
+        public string Type { get; set; }
 
         public double Amount { get; set; }
 
@@ -17,7 +17,7 @@ namespace HomeBankingNet8.DTOs
         public TransactionDTO(Transaction tr)
         {
             Id = tr.Id;
-            Type = tr.Type;
+            Type = tr.Type.ToString();
             Amount = tr.Amount;
             Date = tr.Date;
             Description = tr.Description;
