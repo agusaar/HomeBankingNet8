@@ -21,7 +21,7 @@ namespace HomeBankingNet8.Models
             {
                 var clients = new Client[]
                 {
-                    new Client { Email = "agusaar@gmail.com", FirstName="Agustin", LastName="Rojas", Password="123456"},
+                    new Client { Email = "juancito@gmail.com", FirstName="Juan", LastName="Navarro", Password="123456"},
                     new Client { Email = "martin@gmail.com", FirstName="Martin", LastName="Perez", Password="7890"},
                     new Client { Email = "laura@gmail.com", FirstName="Laura", LastName="Alvarez", Password="admin1234"},
                     new Client { Email = "javier@gmail.com", FirstName="Javier", LastName="Fernandez", Password="123456"}
@@ -37,7 +37,7 @@ namespace HomeBankingNet8.Models
 
             if (!context.Account.Any())
             {
-                var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
+                var client = context.Clients.FirstOrDefault(c => c.Email == "juancito@gmail.com");
                 if (client != null)
                 {
                     var accounts = new Account[]
@@ -142,7 +142,7 @@ namespace HomeBankingNet8.Models
 
                 context.Loans.AddRange(loans);
                 context.SaveChanges();
-                var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
+                var client = context.Clients.FirstOrDefault(c => c.Email == "juancito@gmail.com");
                 if (client != null)
                 {
                     var loan = context.Loans.FirstOrDefault(l => l.Name == "Estudiantil");
@@ -193,9 +193,9 @@ namespace HomeBankingNet8.Models
 
         private static void InitializeCards(HomeBankingContext context)
         {
-            if (!context.Loans.Any())
+            if (!context.Cards.Any())
             {
-                var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
+                var client = context.Clients.FirstOrDefault(c => c.Email == "juancito@gmail.com");
                 if (client != null)
                 {
                     var cards = new Card[]
@@ -206,8 +206,16 @@ namespace HomeBankingNet8.Models
                                 ThruDate= DateTime.Now.AddYears(1) },
                             new Card {
                                 ClientId= client.Id, CardHolder = client.FirstName + " " + client.LastName, Type = CardType.CREDIT,
-                                Color = CardColor.TITANIUM, Number = "6985-4512-6587-9874", Cvv = 750, FromDate= DateTime.Now,
-                                ThruDate= DateTime.Now.AddYears(2) }
+                                Color = CardColor.TITANIUM, Number = "6985-4512-6587-9874", Cvv = 750, FromDate= DateTime.Now.AddDays(-500),
+                                ThruDate= DateTime.Now.AddDays(-500).AddYears(2) },
+                            new Card {
+                                ClientId= client.Id, CardHolder = client.FirstName + " " + client.LastName, Type = CardType.DEBIT,
+                                Color = CardColor.TITANIUM, Number = "7946-5888-5486-4568", Cvv = 999, FromDate= DateTime.Now.AddDays(-230),
+                                ThruDate= DateTime.Now.AddDays(-230).AddYears(2) },
+                            new Card {
+                                ClientId= client.Id, CardHolder = client.FirstName + " " + client.LastName, Type = CardType.CREDIT,
+                                Color = CardColor.SILVER, Number = "4729-8752-6787-4985", Cvv = 154, FromDate= DateTime.Now.AddDays(-100),
+                                ThruDate= DateTime.Now.AddDays(-100).AddYears(2) }
                     };
 
                     context.Cards.AddRange(cards);

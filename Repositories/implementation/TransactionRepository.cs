@@ -14,7 +14,7 @@ namespace HomeBankingNet8.Repositories.implementation
                 .FirstOrDefault();
         }
 
-        public IEnumerable<Transaction> GetAllAccounts()
+        public IEnumerable<Transaction> GetAllTransactions()
         {
             return FindAll()
                 .ToList();
