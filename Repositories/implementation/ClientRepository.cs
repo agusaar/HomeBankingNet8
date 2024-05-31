@@ -12,6 +12,7 @@ namespace HomeBankingNet8.Repositories.implementation
         {
             return FindByCondition(client => client.Id == id)
                 .Include(client => client.Accounts)
+                .Include(client=> client.Cards)
                 .Include(client => client.ClientLoans)
                 .ThenInclude(clientLoan => clientLoan.Loan)
                 .FirstOrDefault();
@@ -21,6 +22,7 @@ namespace HomeBankingNet8.Repositories.implementation
         {
             return FindAll()
                .Include(client => client.Accounts)
+               .Include(client => client.Cards)
                .Include(client => client.ClientLoans)
                 .ThenInclude(clientLoan => clientLoan.Loan)
                .ToList();

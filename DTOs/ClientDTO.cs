@@ -16,6 +16,7 @@ namespace HomeBankingNet8.DTOs
 
         public ICollection<AccountClientDTO> Accounts { get; set; }
         public ICollection<ClientLoanDTO> Loans { get; set; }
+        public ICollection<CardDTO> Cards { get; set; }
 
         public ClientDTO(Client c)
         {
@@ -25,6 +26,7 @@ namespace HomeBankingNet8.DTOs
             Email = c.Email;
             Accounts = c.Accounts.Select(ac => new AccountClientDTO(ac)).ToList();
             Loans = c.ClientLoans.Select(cl => new ClientLoanDTO(cl)).ToList();
+            Cards = c.Cards.Select(card => new CardDTO(card)).ToList(); 
         }
     }
 }

@@ -11,9 +11,11 @@ namespace HomeBankingNet8.Models
             InitializeAccounts(context);
             InitializeTransactions(context);
             InitializeLoans(context);
+            InitializeCards(context);
         }
 
-        private static void InitializeClients(HomeBankingContext context) {
+        private static void InitializeClients(HomeBankingContext context)
+        {
 
             if (!context.Clients.Any())
             {
@@ -30,9 +32,11 @@ namespace HomeBankingNet8.Models
             }
         }
 
-        private static void InitializeAccounts(HomeBankingContext context){
+        private static void InitializeAccounts(HomeBankingContext context)
+        {
 
-            if (!context.Account.Any()){
+            if (!context.Account.Any())
+            {
                 var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
                 if (client != null)
                 {
@@ -90,8 +94,9 @@ namespace HomeBankingNet8.Models
             }
         }
 
-        private static void InitializeTransactions(HomeBankingContext context) {
-            
+        private static void InitializeTransactions(HomeBankingContext context)
+        {
+
             if (!context.Transactions.Any())
             {
                 var account = context.Account.FirstOrDefault(c => c.Number == "VIN002");
@@ -124,7 +129,8 @@ namespace HomeBankingNet8.Models
             }
         }
 
-        private static void InitializeLoans(HomeBankingContext context){ 
+        private static void InitializeLoans(HomeBankingContext context)
+        {
             if (!context.Loans.Any())
             {
                 var loans = new Loan[]
@@ -182,6 +188,31 @@ namespace HomeBankingNet8.Models
                     context.SaveChanges();
                 }
 
+            }
+        }
+
+        private static void InitializeCards(HomeBankingContext context)
+        {
+            if (!context.Loans.Any())
+            {
+                var client = context.Clients.FirstOrDefault(c => c.Email == "agusaar@gmail.com");
+                if (client != null)
+                {
+                    var cards = new Card[]
+                    {
+                            new Card {
+                                ClientId= client.Id, CardHolder = client.FirstName + " " + client.LastName, Type = CardType.DEBIT,
+                                Color = CardColor.GOLD, Number = "1234-5678-9012-3456", Cvv = 121, FromDate= DateTime.Now,
+                                ThruDate= DateTime.Now.AddYears(1) },
+                            new Card {
+                                ClientId= client.Id, CardHolder = client.FirstName + " " + client.LastName, Type = CardType.CREDIT,
+                                Color = CardColor.TITANIUM, Number = "6985-4512-6587-9874", Cvv = 750, FromDate= DateTime.Now,
+                                ThruDate= DateTime.Now.AddYears(2) }
+                    };
+
+                    context.Cards.AddRange(cards);
+                    context.SaveChanges();
+                }
             }
         }
     }
