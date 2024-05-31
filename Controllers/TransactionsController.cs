@@ -22,7 +22,7 @@ namespace HomeBankingNet8.Controllers
             {
                 try
                 {
-                    var transactions = _transactionRepository.GetAllAccounts();
+                    var transactions = _transactionRepository.GetAllTransactions();
                     var transactionsDTO = transactions.Select(tr => new TransactionDTO(tr)).ToList();
                     return Ok(transactionsDTO);
                 }
