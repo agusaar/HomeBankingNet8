@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HomeBankingNet8.DTOs;
 using HomeBankingNet8.Repositories.Interfaces;
+using HomeBankingNet8.Models;
 
 namespace HomeBankingNet8.Controllers
 {
@@ -42,6 +43,55 @@ namespace HomeBankingNet8.Controllers
                 }
                 var clientDTO = new ClientDTO(client);
                 return Ok(clientDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("current")]
+        public IActionResult GetCurrent() {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                if (email == string.Empty)
+                {
+                    return Forbid();
+                }
+                Client client = _clientRepository.FindByEmail(email);
+                if (client == null)
+                {
+                    return Forbid();
+                }
+                var clientDto = new ClientDTO(client);
+                return Ok(clientDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] ClientSignUpDTO signUpDto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(signUpDto.FirstName) || string.IsNullOrEmpty(signUpDto.LastName)
+                    || string.IsNullOrEmpty(signUpDto.Email) || string.IsNullOrEmpty(signUpDto.Password))
+                    return StatusCode(403, "datos invalidos");
+
+                Client user = _clientRepository.FindByEmail(signUpDto.Email);
+                if (user != null)
+                {
+                    return StatusCode(403, "El mail esta en uso");
+                }
+
+                Client newClient = new Client { Email = signUpDto.Email, FirstName = signUpDto.FirstName, LastName = signUpDto.LastName, Password = signUpDto.Password };
+
+                _clientRepository.Save(newClient);
+                return Created("", newClient);
             }
             catch (Exception ex)
             {

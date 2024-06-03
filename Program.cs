@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using HomeBankingNet8.Models;
 using HomeBankingNet8.Repositories.implementation;
 using HomeBankingNet8.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +13,24 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<HomeBankingContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("HomeBankingConexion")));
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+            options.LoginPath = new PathString("/localhost:5070/index.html");
+        });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ClientOnly", policy => policy.RequireClaim("Client"));
+});
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -38,9 +54,17 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

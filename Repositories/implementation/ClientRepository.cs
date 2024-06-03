@@ -8,6 +8,16 @@ namespace HomeBankingNet8.Repositories.implementation
     {
         public ClientRepository(HomeBankingContext repositoryContext) : base(repositoryContext) { }
 
+        public Client FindByEmail(string email)
+        {
+            return FindByCondition(client => client.Email.ToUpper() == email.ToUpper())
+                .Include(client => client.Accounts)
+                .Include(client => client.Cards)
+                .Include(client => client.ClientLoans)
+                .ThenInclude(clientLoans => clientLoans.Loan)
+                .FirstOrDefault();
+        }
+
         public Client FindById(long id)
         {
             return FindByCondition(client => client.Id == id)
