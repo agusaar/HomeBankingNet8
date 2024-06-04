@@ -17,12 +17,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         .AddCookie(options =>
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
-            options.LoginPath = new PathString("/localhost:5070/index.html");
+            options.LoginPath = new PathString("/index.html");
         });
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ClientOnly", policy => policy.RequireClaim("Client"));
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
 });
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 

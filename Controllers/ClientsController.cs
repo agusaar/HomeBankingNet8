@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using HomeBankingNet8.DTOs;
 using HomeBankingNet8.Repositories.Interfaces;
 using HomeBankingNet8.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HomeBankingNet8.Controllers
 {
@@ -17,6 +18,7 @@ namespace HomeBankingNet8.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult getAll()
         {
             try
@@ -51,18 +53,19 @@ namespace HomeBankingNet8.Controllers
         }
 
         [HttpGet("current")]
+        [Authorize(Policy = "ClientOnly")]
         public IActionResult GetCurrent() {
             try
             {
                 string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
                 if (email == string.Empty)
                 {
-                    return Forbid();
+                    return StatusCode(403, "Unauthorized Capo");
                 }
                 Client client = _clientRepository.FindByEmail(email);
                 if (client == null)
                 {
-                    return Forbid();
+                    return StatusCode(403, "Unauthorized Capo");
                 }
                 var clientDto = new ClientDTO(client);
                 return Ok(clientDto);
@@ -91,7 +94,7 @@ namespace HomeBankingNet8.Controllers
                 Client newClient = new Client { Email = signUpDto.Email, FirstName = signUpDto.FirstName, LastName = signUpDto.LastName, Password = signUpDto.Password };
 
                 _clientRepository.Save(newClient);
-                return Created("", newClient);
+                return Created("", new ClientDTO(signUpDto));
             }
             catch (Exception ex)
             {

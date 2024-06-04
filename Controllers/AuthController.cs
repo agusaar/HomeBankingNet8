@@ -30,11 +30,14 @@ namespace HomeBankingNet8.Controllers
                 if (user == null || !String.Equals(user.Password, client.Password)){
                     return Unauthorized();
                 }
-
-                var claims = new List<Claim>
+                var claims = new List<Claim>();
+                if (String.Equals(user.Email, "agusaar@gmail.com"))
                 {
-                    new Claim("Client",user.Email)
-                };
+                    claims.Add(new Claim("Client", user.Email));
+                    claims.Add(new Claim("Admin", user.Email));
+                }
+                else
+                    claims.Add(new Claim("Client", user.Email));
 
                 var claimsIdentity = new ClaimsIdentity(
                     claims,
