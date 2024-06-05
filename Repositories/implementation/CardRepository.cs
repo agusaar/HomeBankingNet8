@@ -7,6 +7,18 @@ namespace HomeBankingNet8.Repositories.implementation
     {
         public CardRepository(HomeBankingContext repositoryContext) : base(repositoryContext) { }
 
+        public Card FindByCardNum(string CardNum)
+        {
+            return FindByCondition(card => string.Equals(card.Number, CardNum))
+                .FirstOrDefault();
+        }
+
+        public IEnumerable<Card> FindByClientId(long ClientId)
+        {
+            return FindByCondition(card => card.ClientId == ClientId)
+                .ToList();
+        }
+
         public Card FindById(long id)
         {
             return FindByCondition(card => card.Id == id)

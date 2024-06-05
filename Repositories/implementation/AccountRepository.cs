@@ -8,11 +8,25 @@ namespace HomeBankingNet8.Repositories.implementation
     {
         public AccountRepository(HomeBankingContext repositoryContext) : base(repositoryContext) { }
 
+        public Account FindByAccountNumber(string accountNumber)
+        {
+            return FindByCondition(acc => string.Equals(acc.Number, accountNumber))
+                .Include(acc=> acc.Transactions)
+                .FirstOrDefault();
+        }
+
         public Account FindById(long id)
         {
             return FindByCondition(acc => acc.Id == id)
                 .Include(acc => acc.Transactions)
                 .FirstOrDefault();
+        }
+
+        public IEnumerable<Account> GetAccountsByClient(long clientId)
+        {
+            return FindByCondition(acc => acc.ClientId == clientId)
+                .Include(acc => acc.Transactions)
+                .ToList();
         }
 
         public IEnumerable<Account> GetAllAccounts()

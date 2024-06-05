@@ -26,8 +26,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
 });
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
