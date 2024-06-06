@@ -1,11 +1,12 @@
 ﻿using HomeBankingNet8.DTOs;
 using HomeBankingNet8.Models;
+using HomeBankingNet8.Utils;
 
 namespace HomeBankingNet8.Services.Interfaces
 {
     public interface ICardService
     {
-        public CardDTO CreateNewCard(NewCardDTO newCardDTO, Client ownerClient);
+        public Response<CardDTO> CreateNewCard(NewCardDTO newCardDTO, Client ownerClient);
 
     }
 }

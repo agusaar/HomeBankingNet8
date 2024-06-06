@@ -15,7 +15,7 @@ namespace HomeBankingNet8.Services.Implementations
             _cardRepository = cardRepository;
         }
 
-        public CardDTO CreateNewCard(NewCardDTO newCardDTO, Client ownerClient)
+        public Response<CardDTO> CreateNewCard(NewCardDTO newCardDTO, Client ownerClient)
         {
             try
             {
@@ -60,12 +60,12 @@ namespace HomeBankingNet8.Services.Implementations
                         ThruDate = DateTime.Now.AddYears(5)
                     };
                     _cardRepository.Save(card);
-                    return new CardDTO(card);
+                    return new Response<CardDTO>(new CardDTO(card),200);
 
                 }
                 else
                 {
-                    return null;
+                    return new Response<CardDTO>(null,403);
                 }
             }
             catch (Exception)

@@ -34,12 +34,12 @@ namespace HomeBankingNet8.Controllers
         {
             try
             {
-                var account = _accountService.GetAccountById(id);
-                if (account == null)
-                {
+                var res = _accountService.GetAccountById(id);
+                
+                if (res.statusCode!=200)
                     return NotFound();
-                }
-                return Ok(account);
+
+                return Ok(res.data);
             }
             catch (Exception ex)
             {

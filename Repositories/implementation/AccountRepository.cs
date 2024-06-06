@@ -10,7 +10,7 @@ namespace HomeBankingNet8.Repositories.implementation
 
         public Account FindByAccountNumber(string accountNumber)
         {
-            return FindByCondition(acc => string.Equals(acc.Number, accountNumber))
+            return FindByCondition(acc => string.Equals(acc.Number.ToUpper(), accountNumber.ToUpper()))
                 .Include(acc=> acc.Transactions)
                 .FirstOrDefault();
         }
@@ -37,8 +37,13 @@ namespace HomeBankingNet8.Repositories.implementation
         }
         public void Save(Account acc)
         {
-            Create(acc);
+            if (acc.Id == 0)
+                Create(acc);
+            else
+                Update(acc);
+
             SaveChanges();
+            RepositoryContext.ChangeTracker.Clear();
         }
     }
 }

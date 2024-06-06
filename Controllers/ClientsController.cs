@@ -43,11 +43,11 @@ namespace HomeBankingNet8.Controllers
         {
             try
             {
-                ClientDTO client = _clientService.FindByID(id);
-                if (client == null)
+                var response = _clientService.FindByID(id);
+                if (response.statusCode != 200)
                     return NotFound();
                 else
-                    return Ok(client);
+                    return Ok(response.data);
             }
             catch (Exception ex)
             {
@@ -65,11 +65,11 @@ namespace HomeBankingNet8.Controllers
                 {
                     return StatusCode(403, "Unauthorized Capo");
                 }
-                Client client = _clientService.FindByEmail(email);
-                if(client == null)
+                var response = _clientService.FindByEmail(email);
+                if(response.statusCode != 200)
                     return StatusCode(403, "Unauthorized Capo");
                 else
-                    return Ok(new ClientDTO(client));
+                    return Ok(new ClientDTO(response.data));
             }
             catch (Exception ex)
             {
@@ -82,21 +82,22 @@ namespace HomeBankingNet8.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(signUpDto.FirstName) || string.IsNullOrEmpty(signUpDto.LastName)
-                    || string.IsNullOrEmpty(signUpDto.Email) || string.IsNullOrEmpty(signUpDto.Password))
-                    return StatusCode(403, "datos invalidos");
+                var response = _clientService.CreateNewClient(signUpDto);
 
-                ClientDTO client = _clientService.CreateNewClient(signUpDto);
-                if (client == null)
-                    return StatusCode(403, "El mail esta en uso.");
-                else
+                if (response.statusCode == 200)
                 {
-                    Client newClient = _clientService.FindByEmail(signUpDto.Email);
-                    AccountClientDTO accountDto = _accountService.CreateAccount(newClient.Id);
-                    if (accountDto == null)
-                        return StatusCode(500, "No se pudo crear la cuenta asociada al cliente.");
-                    return Created("", client);
+                    var res = _clientService.FindByEmail(signUpDto.Email);
+                    var accResponse = _accountService.CreateAccount(res.data.Id); //Revisar
+
+                    if (accResponse.statusCode != 200)
+                        return StatusCode(500, "Error al crear la cuenta");//Esto ocurriria unicamente si se supera el limite de cuentas. No tiene sentido
+
+                    return Created("", response.data);
                 }
+                else if (response.statusCode == 403)
+                    return StatusCode(403, "datos invalidos");
+                else
+                    return StatusCode(409, "El mail esta en uso.");
             }
             catch (Exception ex)
             {
@@ -109,16 +110,17 @@ namespace HomeBankingNet8.Controllers
         public IActionResult newAccount()
         {
             string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            Client currentUser = _clientService.FindByEmail(email);
-            if (currentUser == null) 
+            var response = _clientService.FindByEmail(email);
+            
+            if (response.statusCode != 200) 
                 return NotFound();
             else
             {
-                AccountClientDTO newAccount = _accountService.CreateAccount(currentUser.Id);
-                if (newAccount == null)
+                var res = _accountService.CreateAccount(response.data.Id);
+                if (res.statusCode != 200)
                     return StatusCode(403, "Forbidden. Ya tiene el numero maximo de cuentas");
                 else
-                    return Created("", newAccount);
+                    return Created("", res.data);
             }
                 
         }
@@ -128,16 +130,18 @@ namespace HomeBankingNet8.Controllers
         public IActionResult newCard(NewCardDTO newCardDto)
         {
             string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            Client currentUser = _clientService.FindByEmail(email);
-            if (currentUser == null)
+            var response = _clientService.FindByEmail(email);
+
+            if (response.statusCode != 200)
                 return NotFound();
             else
             {
-            CardDTO card = _cardService.CreateNewCard(newCardDto, currentUser);
-            if (card != null)
-                return Created("", card);
-            else
-                return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
+                var res = _cardService.CreateNewCard(newCardDto, response.data);
+
+                if (res.statusCode==200)
+                    return Created("", res.data);
+                else
+                    return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
             }
         }
     }

@@ -2,6 +2,7 @@
 using HomeBankingNet8.Models;
 using HomeBankingNet8.Repositories.Interfaces;
 using HomeBankingNet8.Services.Interfaces;
+using HomeBankingNet8.Utils;
 
 namespace HomeBankingNet8.Services.Implementations
 {
@@ -14,15 +15,15 @@ namespace HomeBankingNet8.Services.Implementations
             _clientRepository = clientRepository;
         }
 
-        public Client FindByEmail(string email)
+        public Response<Client> FindByEmail(string email)
         {
             try
             {
                 Client client = _clientRepository.FindByEmail(email);
                 if (client == null)
-                    return null;
+                    return new Response<Client>(null, 404);
                 else
-                    return client;
+                    return new Response<Client>(client,200);
             }
             catch (Exception)
             {
@@ -30,25 +31,29 @@ namespace HomeBankingNet8.Services.Implementations
             }
         }
 
-        public ClientDTO FindByID(long Id)
+        public Response<ClientDTO> FindByID(long Id)
         {
             Client client = _clientRepository.FindById(Id);
             if(client == null)
-                return null;
+                return new Response<ClientDTO>(null, 404);
             else
-                return new ClientDTO(client);
+                return new Response<ClientDTO>(new ClientDTO(client),200);
         }
 
-        public ClientDTO CreateNewClient(ClientSignUpDTO signUpDto)
+        public Response<ClientDTO> CreateNewClient(ClientSignUpDTO signUpDto)
         {
-            Client user = FindByEmail(signUpDto.Email); //Esto lo hace el servicio
-            if (user != null)
-                return null;
+            if (string.IsNullOrEmpty(signUpDto.FirstName) || string.IsNullOrEmpty(signUpDto.LastName)
+                    || string.IsNullOrEmpty(signUpDto.Email) || string.IsNullOrEmpty(signUpDto.Password))
+                return new Response<ClientDTO>(null,403);
+
+            var user = FindByEmail(signUpDto.Email); 
+            if (user.data != null)
+                return new Response<ClientDTO>(null,409);
             
             Client newClient = new Client { Email = signUpDto.Email, FirstName = signUpDto.FirstName, LastName = signUpDto.LastName, Password = signUpDto.Password };
             _clientRepository.Save(newClient);
 
-            return new ClientDTO(signUpDto);
+            return new Response<ClientDTO>(new ClientDTO(signUpDto),200);
         }
 
 
