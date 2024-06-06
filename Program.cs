@@ -3,6 +3,8 @@ using HomeBankingNet8.Models;
 using HomeBankingNet8.Repositories.implementation;
 using HomeBankingNet8.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using HomeBankingNet8.Services.Interfaces;
+using HomeBankingNet8.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +27,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ClientOnly", policy => policy.RequireClaim("Client"));
     options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
 });
+
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
+
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICardService, CardService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
