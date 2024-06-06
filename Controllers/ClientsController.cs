@@ -92,7 +92,7 @@ namespace HomeBankingNet8.Controllers
                 else
                 {
                     Client newClient = _clientService.FindByEmail(signUpDto.Email);
-                    AccountDTO accountDto = _accountService.CreateAccount(newClient.Id);
+                    AccountClientDTO accountDto = _accountService.CreateAccount(newClient.Id);
                     if (accountDto == null)
                         return StatusCode(500, "No se pudo crear la cuenta asociada al cliente.");
                     return Created("", client);
@@ -114,7 +114,7 @@ namespace HomeBankingNet8.Controllers
                 return NotFound();
             else
             {
-                AccountDTO newAccount = _accountService.CreateAccount(currentUser.Id);
+                AccountClientDTO newAccount = _accountService.CreateAccount(currentUser.Id);
                 if (newAccount == null)
                     return StatusCode(403, "Forbidden. Ya tiene el numero maximo de cuentas");
                 else

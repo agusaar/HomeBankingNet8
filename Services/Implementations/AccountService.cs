@@ -15,7 +15,7 @@ namespace HomeBankingNet8.Services.Implementations
             _accountRepository = accountRepository;
         }
 
-        public AccountDTO CreateAccount(long ClientId)
+        public AccountClientDTO CreateAccount(long ClientId)
         {
             var accounts = _accountRepository.GetAccountsByClient(ClientId);
             if (accounts.Count() >= 3)
@@ -39,9 +39,9 @@ namespace HomeBankingNet8.Services.Implementations
                         existeAccNum = false;
                 }
 
-                Account newAccount = new Account { ClientId = ClientId, CreationDate = DateTime.Now, Number = accNum, Balance = 0, Transactions = [] };
+                Account newAccount = new Account { ClientId = ClientId, CreationDate = DateTime.Now, Number = accNum, Balance = 0 };
                 _accountRepository.Save(newAccount);
-                return new AccountDTO(newAccount);
+                return new AccountClientDTO(newAccount);
             }
         }
 
