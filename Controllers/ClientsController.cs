@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using HomeBankingNet8.Utils;
 using System;
 using HomeBankingNet8.Services.Interfaces;
+using Azure;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace HomeBankingNet8.Controllers
 {
@@ -44,6 +46,7 @@ namespace HomeBankingNet8.Controllers
             try
             {
                 var response = _clientService.FindByID(id);
+
                 if (response.statusCode != 200)
                     return NotFound();
                 else
@@ -61,13 +64,12 @@ namespace HomeBankingNet8.Controllers
             try
             {
                 string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-                if (email == string.Empty)
-                {
-                    return StatusCode(403, "Unauthorized Capo");
-                }
                 var response = _clientService.FindByEmail(email);
-                if(response.statusCode != 200)
+
+                if(response.statusCode == 403)
                     return StatusCode(403, "Unauthorized Capo");
+                else if(response.statusCode == 404)
+                    return NotFound();
                 else
                     return Ok(new ClientDTO(response.data));
             }
@@ -85,19 +87,13 @@ namespace HomeBankingNet8.Controllers
                 var response = _clientService.CreateNewClient(signUpDto);
 
                 if (response.statusCode == 200)
-                {
-                    var res = _clientService.FindByEmail(signUpDto.Email);
-                    var accResponse = _accountService.CreateAccount(res.data.Id); //Revisar
-
-                    if (accResponse.statusCode != 200)
-                        return StatusCode(500, "Error al crear la cuenta");//Esto ocurriria unicamente si se supera el limite de cuentas. No tiene sentido
-
                     return Created("", response.data);
-                }
                 else if (response.statusCode == 403)
                     return StatusCode(403, "datos invalidos");
-                else
+                else if (response.statusCode == 409)
                     return StatusCode(409, "El mail esta en uso.");
+                else
+                    return StatusCode(500, "Error al crear la cuenta");
             }
             catch (Exception ex)
             {
@@ -110,19 +106,15 @@ namespace HomeBankingNet8.Controllers
         public IActionResult newAccount()
         {
             string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            var response = _clientService.FindByEmail(email);
-            
-            if (response.statusCode != 200) 
-                return NotFound();
+            var res = _accountService.CreateAccount(email);
+
+            if (res.statusCode == 403) 
+                return StatusCode(403, "Se llego al limite de cuentas");
             else
-            {
-                var res = _accountService.CreateAccount(response.data.Id);
-                if (res.statusCode != 200)
-                    return StatusCode(403, "Forbidden. Ya tiene el numero maximo de cuentas");
+                if (res.statusCode == 401)
+                    return StatusCode(401, "Unauthorized");
                 else
                     return Created("", res.data);
-            }
-                
         }
 
         [HttpPost("current/cards")]
@@ -130,19 +122,16 @@ namespace HomeBankingNet8.Controllers
         public IActionResult newCard(NewCardDTO newCardDto)
         {
             string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            var response = _clientService.FindByEmail(email);
+            var response = _cardService.CreateNewCard(newCardDto,email);
 
-            if (response.statusCode != 200)
-                return NotFound();
+            if (response.statusCode == 401)
+                return StatusCode(401, "Unauthorized");
+            else if (response.statusCode == 403)
+                return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
+            else if (response.statusCode == 404)
+                return StatusCode(404, "Cliente no encontrado");
             else
-            {
-                var res = _cardService.CreateNewCard(newCardDto, response.data);
-
-                if (res.statusCode==200)
-                    return Created("", res.data);
-                else
-                    return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
-            }
+                return Created("", response.data);
         }
     }
 }

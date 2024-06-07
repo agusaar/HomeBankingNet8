@@ -24,8 +24,6 @@ namespace HomeBankingNet8.Controllers
         {
             try
             {
-                Console.Write("Email: " + client.Email);
-                Console.Write("Password: " + client.Password);
                 var user = _clientRepository.FindByEmail(client.Email);
                 if (user == null || !String.Equals(user.Password, client.Password)){
                     return Unauthorized();

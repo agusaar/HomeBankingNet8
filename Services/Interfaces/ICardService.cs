@@ -6,7 +6,7 @@ namespace HomeBankingNet8.Services.Interfaces
 {
     public interface ICardService
     {
-        public Response<CardDTO> CreateNewCard(NewCardDTO newCardDTO, Client ownerClient);
+        public Response<CardDTO> CreateNewCard(NewCardDTO newCardDTO, string email);
 
     }
 }

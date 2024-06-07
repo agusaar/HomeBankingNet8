@@ -9,16 +9,26 @@ namespace HomeBankingNet8.Services.Implementations
     public class CardService: ICardService
     {
         private readonly ICardRepository _cardRepository;
+        private readonly IClientRepository _clientRepository;
 
-        public CardService(ICardRepository cardRepository)
+        public CardService(ICardRepository cardRepository, IClientRepository clientRepository)
         {
             _cardRepository = cardRepository;
+            _clientRepository = clientRepository;
         }
 
-        public Response<CardDTO> CreateNewCard(NewCardDTO newCardDTO, Client ownerClient)
+        public Response<CardDTO> CreateNewCard(NewCardDTO newCardDTO,string email)
         {
             try
             {
+                if(email == string.Empty)
+                    return new Response<CardDTO>(null, 401);
+
+                Client ownerClient = _clientRepository.FindByEmail(email);
+                if (ownerClient == null)
+                    return new Response<CardDTO>(null, 404);
+                else
+                {
                 CardType newCardType = (CardType)Enum.Parse(typeof(CardType), newCardDTO.Type);
                 var ownerCards = _cardRepository.FindByClientId(ownerClient.Id);
                 int cantCards = ownerCards.Count(card => card.Type == newCardType);
@@ -66,6 +76,7 @@ namespace HomeBankingNet8.Services.Implementations
                 else
                 {
                     return new Response<CardDTO>(null,403);
+                }
                 }
             }
             catch (Exception)

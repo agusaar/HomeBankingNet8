@@ -10,39 +10,52 @@ namespace HomeBankingNet8.Services.Implementations
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IClientRepository _clientRepository;
 
-        public AccountService(IAccountRepository accountRepository)
+        public AccountService(IAccountRepository accountRepository, IClientRepository clientRepository)
         {
             _accountRepository = accountRepository;
+            _clientRepository = clientRepository;
         }
 
-        public Response<AccountClientDTO> CreateAccount(long ClientId)
+        public Response<AccountClientDTO> CreateAccount(string email)
         {
-            var accounts = _accountRepository.GetAccountsByClient(ClientId);
-            if (accounts.Count() >= 3)
-                return new Response<AccountClientDTO>(null, 403);
+            if (email == string.Empty)
+                return new Response<AccountClientDTO>(null, 401);
+
+            Client client = _clientRepository.FindByEmail(email);
+
+            if (client == null)
+                return new Response<AccountClientDTO>(null, 404);
             else
             {
-                Boolean existeAccNum = true;
-                string accNum = "VIN-";
-                Random random = new Random();
-                int numeroRand;
-                while (existeAccNum)
+                var accounts = _accountRepository.GetAccountsByClient(client.Id);
+                if (accounts.Count() >= 3)
+                    return new Response<AccountClientDTO>(null, 403);
+                else
                 {
-                    for (var i = 0; i < 8; i++)
+                    Boolean existeAccNum = true;
+                    string accNum = "VIN-";
+                    Random random = new Random();
+                    int numeroRand;
+                    while (existeAccNum)
                     {
-                        numeroRand = random.Next(0, 10);
-                        accNum += numeroRand;
+                        for (var i = 0; i < 8; i++)
+                        {
+                            numeroRand = random.Next(0, 10);
+                            accNum += numeroRand;
+                        }
+                        if (_accountRepository.FindByAccountNumber(accNum) != null)
+                            accNum = "VIN-";
+                        else
+                            existeAccNum = false;
                     }
-                    if (_accountRepository.FindByAccountNumber(accNum) != null)
-                        accNum = "VIN-";
-                    else
-                        existeAccNum = false;
-                }
 
-                Account newAccount = new Account { ClientId = ClientId, CreationDate = DateTime.Now, Number = accNum, Balance = 0 };
-                _accountRepository.Save(newAccount);
-                return new Response<AccountClientDTO>(new AccountClientDTO(newAccount),200);
+                    Account newAccount = new Account { ClientId = client.Id, CreationDate = DateTime.Now, Number = accNum, Balance = 0 };
+                    _accountRepository.Save(newAccount);
+                    return new Response<AccountClientDTO>(new AccountClientDTO(newAccount),200);
+
+            }
             }
         }
 
