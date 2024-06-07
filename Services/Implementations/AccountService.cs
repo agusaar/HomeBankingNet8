@@ -59,6 +59,25 @@ namespace HomeBankingNet8.Services.Implementations
             }
         }
 
+        public Response<List<AccountDTO>> GetAccountsByCLient(string email)
+        {
+            try
+            {
+                Client client = _clientRepository.FindByEmail(email);
+                if (client == null)
+                    return new Response<List<AccountDTO>>(null, 404);
+
+                var accounts = _accountRepository.GetAccountsByClient(client.Id);
+                return new Response<List<AccountDTO>>(accounts.Select(acc => new AccountDTO(acc)).ToList(),200);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public Response<AccountDTO> GetAccountById(long AccountId)
         {
                 try

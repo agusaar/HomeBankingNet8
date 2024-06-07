@@ -8,5 +8,6 @@ namespace HomeBankingNet8.Services.Interfaces
         public Response<AccountClientDTO> CreateAccount(string email);
         public List<AccountDTO> GetAllAccounts();
         public Response<AccountDTO> GetAccountById(long AccountId);
+        public Response<List<AccountDTO>> GetAccountsByCLient(string email);
     }
 }

@@ -117,6 +117,21 @@ namespace HomeBankingNet8.Controllers
                     return Created("", res.data);
         }
 
+        [HttpGet("current/accounts")]
+        [Authorize(Policy = "ClientOnly")]
+        public IActionResult getAccounts()
+        {
+            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+            var res = _accountService.GetAccountsByCLient(email);
+
+            if(res.statusCode == 200)
+                return StatusCode(200, res.data);
+
+            return StatusCode(404, "Cliente no encontrado");
+        }
+
+
+
         [HttpPost("current/cards")]
         [Authorize(Policy = "ClientOnly")]
         public IActionResult newCard(NewCardDTO newCardDto)
