@@ -35,7 +35,7 @@ namespace HomeBankingNet8.Services.Implementations
             if (fromAccount == null)
                 return new Response<TransactionDTO>(null, 404); //From account Not Found
 
-            Client fromClient = _clientRepository.FindById(fromAccount.Id);
+            Client fromClient = _clientRepository.FindById(fromAccount.ClientId);
             if (fromClient == null)
                 return new Response<TransactionDTO>(null, 500); //No se encontro el dueño de la cuenta, no puede no tener dueño -> internal server error
             if (!string.Equals(fromClient.Email, currentUserEmail))
@@ -51,7 +51,7 @@ namespace HomeBankingNet8.Services.Implementations
             Transaction fromTransaction = new Transaction
             {
                 AccountId = fromAccount.Id,
-                Amount = transferDTO.Amount,
+                Amount = transferDTO.Amount * (-1),
                 Date = DateTime.Now,
                 Description = transferDTO.Description,
                 Type = TransactionType.DEBIT
