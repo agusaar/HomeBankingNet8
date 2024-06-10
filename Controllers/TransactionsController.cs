@@ -60,7 +60,7 @@ namespace HomeBankingNet8.Controllers
 
                 //400,401,403,404,500
                 if (response.statusCode == 400)
-                    return StatusCode(400, "Error en la peticion. Faltan campos o FromAccount es igual a ToAccount");
+                    return StatusCode(400, "Error en la peticion. Faltan campos o existen campos incorrectos");
                 if (response.statusCode == 401)
                     return StatusCode(401, "Unauthorized. No hay email logeado");
                 if (response.statusCode == 403)

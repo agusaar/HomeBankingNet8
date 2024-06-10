@@ -22,7 +22,7 @@ namespace HomeBankingNet8.Services.Implementations
         public Response<TransactionDTO> CreateTransaction(TransferDTO transferDTO, string currentUserEmail)
         {
             if (transferDTO.FromAccountNumber.IsNullOrEmpty() || transferDTO.ToAccountNumber.IsNullOrEmpty()
-                || transferDTO.Description.IsNullOrEmpty() || transferDTO.Amount == 0)
+                || transferDTO.Description.IsNullOrEmpty() || transferDTO.Amount <= 0)
                 return new Response<TransactionDTO>(null, 400); //Bad Request
             
             if (currentUserEmail == string.Empty)
@@ -53,7 +53,7 @@ namespace HomeBankingNet8.Services.Implementations
                 AccountId = fromAccount.Id,
                 Amount = transferDTO.Amount * (-1),
                 Date = DateTime.Now,
-                Description = transferDTO.Description,
+                Description = transferDTO.Description+" Enviado a: "+toAccount.Number,
                 Type = TransactionType.DEBIT
             };
 
@@ -64,7 +64,7 @@ namespace HomeBankingNet8.Services.Implementations
                 AccountId = toAccount.Id,
                 Amount = transferDTO.Amount,
                 Date = DateTime.Now,
-                Description = transferDTO.Description,
+                Description = transferDTO.Description + " De: "+fromAccount.Number,
                 Type = TransactionType.CREDIT
             };
 
