@@ -18,6 +18,15 @@ namespace HomeBankingNet8.DTOs
             Amount = cl.Amount;
             Payments = int.Parse(cl.Payments);
         }
+
+        public ClientLoanDTO(ClientLoan cl,string name)
+        {
+            Id = cl.Id;
+            LoanId = cl.LoanId;
+            Name = name;
+            Amount = cl.Amount;
+            Payments = int.Parse(cl.Payments);
+        }
     }
 
 }

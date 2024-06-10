@@ -58,7 +58,7 @@ namespace HomeBankingNet8.Controllers
                 string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
                 var response = _transactionService.CreateTransaction(transferDTO,email);
 
-                //400,401,403,404,500
+                
                 if (response.statusCode == 401)
                     return StatusCode(403, "Forbidden. Hay campos vacios o monto invalido.");
                 if (response.statusCode == 402)
