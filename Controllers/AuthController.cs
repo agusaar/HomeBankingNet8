@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace HomeBankingNet8.Controllers
 {
@@ -25,7 +27,7 @@ namespace HomeBankingNet8.Controllers
             try
             {
                 var user = _clientRepository.FindByEmail(client.Email);
-                if (user == null || !String.Equals(user.Password, client.Password)){
+                if (user == null || !VerificarPassword(client.Password,user.Password)){
                     return Unauthorized();
                 }
                 var claims = new List<Claim>();
@@ -65,6 +67,17 @@ namespace HomeBankingNet8.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+        public bool VerificarPassword(string passwordIngresada, string passwordHasheada)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                byte[] hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(passwordIngresada));
+                string hash = Convert.ToBase64String(hashBytes);
+
+                return hash == passwordHasheada;
             }
         }
     }

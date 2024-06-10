@@ -4,6 +4,8 @@ using HomeBankingNet8.Repositories.Interfaces;
 using HomeBankingNet8.Services.Interfaces;
 using HomeBankingNet8.Utils;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace HomeBankingNet8.Services.Implementations
 {
@@ -65,8 +67,10 @@ namespace HomeBankingNet8.Services.Implementations
                 var user = FindByEmail(signUpDto.Email); 
                 if (user.data != null)
                     return new Response<ClientDTO>(null,409);
+                Console.Write(signUpDto.Password);
+                Console.Write(EncriptarPassword(signUpDto.Password));
             
-                Client newClient = new Client { Email = signUpDto.Email, FirstName = signUpDto.FirstName, LastName = signUpDto.LastName, Password = signUpDto.Password };
+                Client newClient = new Client { Email = signUpDto.Email, FirstName = signUpDto.FirstName, LastName = signUpDto.LastName, Password = EncriptarPassword(signUpDto.Password) };
                 _clientRepository.Save(newClient);
 
                 //Inicio Create acc
@@ -108,6 +112,17 @@ namespace HomeBankingNet8.Services.Implementations
             {
 
                 throw;
+            }
+        }
+
+        public string EncriptarPassword(string password)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                byte[] hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+                string hash = Convert.ToBase64String(hashBytes);
+
+                return hash;
             }
         }
 
