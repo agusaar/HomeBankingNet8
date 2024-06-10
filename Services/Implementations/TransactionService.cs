@@ -23,13 +23,13 @@ namespace HomeBankingNet8.Services.Implementations
         {
             if (transferDTO.FromAccountNumber.IsNullOrEmpty() || transferDTO.ToAccountNumber.IsNullOrEmpty()
                 || transferDTO.Description.IsNullOrEmpty() || transferDTO.Amount <= 0)
-                return new Response<TransactionDTO>(null, 400); //Bad Request
+                return new Response<TransactionDTO>(null, 401); //Bad Request
             
             if (currentUserEmail == string.Empty)
-                return new Response<TransactionDTO>(null, 401); //No hay usuario loggeado
+                return new Response<TransactionDTO>(null, 402); //No hay usuario loggeado
 
             if (string.Equals(transferDTO.FromAccountNumber, transferDTO.ToAccountNumber))
-                return new Response<TransactionDTO>(null, 400); //Revisar los status codes
+                return new Response<TransactionDTO>(null, 403); //Igual cuenta de origen y destino
 
             Account fromAccount = _accountRepository.FindByAccountNumber(transferDTO.FromAccountNumber);
             if (fromAccount == null)
@@ -39,14 +39,14 @@ namespace HomeBankingNet8.Services.Implementations
             if (fromClient == null)
                 return new Response<TransactionDTO>(null, 500); //No se encontro el dueño de la cuenta, no puede no tener dueño -> internal server error
             if (!string.Equals(fromClient.Email, currentUserEmail))
-                return new Response<TransactionDTO>(null, 403); //Unauthorized, no esta logeado
+                return new Response<TransactionDTO>(null, 405); //Unauthorized, no esta logeado
 
             Account toAccount = _accountRepository.FindByAccountNumber(transferDTO.ToAccountNumber);
             if (toAccount == null)
-                return new Response<TransactionDTO>(null, 404); //To account Not Found
+                return new Response<TransactionDTO>(null, 406); //To account Not Found
 
             if (fromAccount.Balance < transferDTO.Amount)
-                return new Response<TransactionDTO>(null, 400); //No hay saldo suficiente. Revisar
+                return new Response<TransactionDTO>(null, 407); //No hay saldo suficiente. Revisar
 
             Transaction fromTransaction = new Transaction
             {

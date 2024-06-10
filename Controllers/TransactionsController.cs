@@ -59,16 +59,22 @@ namespace HomeBankingNet8.Controllers
                 var response = _transactionService.CreateTransaction(transferDTO,email);
 
                 //400,401,403,404,500
-                if (response.statusCode == 400)
-                    return StatusCode(400, "Error en la peticion. Faltan campos o existen campos incorrectos");
                 if (response.statusCode == 401)
-                    return StatusCode(401, "Unauthorized. No hay email logeado");
+                    return StatusCode(403, "Forbidden. Hay campos vacios o monto invalido.");
+                if (response.statusCode == 402)
+                    return StatusCode(401, "Unauthorized. No hay cuenta autenticada.");
                 if (response.statusCode == 403)
-                    return StatusCode(403, "Forbiden. La cuenta no corresponde al usuario loggeado"); 
+                    return StatusCode(403, "Forbidden. Igual cuenta origen y estino"); 
                 if (response.statusCode == 404)
-                    return StatusCode(404, "FromAccount o ToAccount no encontrada.");
+                    return StatusCode(403, "Forbidden. Cuenta origen no existe.");
+                if (response.statusCode == 405)
+                    return StatusCode(403, "Forbidden. La cuenta origen no pertenece al cliente autenticado. ");
+                if (response.statusCode == 406)
+                    return StatusCode(403, "Forbidden. Cuenta destino no encontrada.");
+                if (response.statusCode == 407)
+                    return StatusCode(403, "Forbidden. No hay saldo suficiente en la cuenta origen.");
                 if (response.statusCode == 500)
-                    return StatusCode(500, "Error. No se encontro al dueño de la cuenta loggeada.");
+                    return StatusCode(500, "Error. No se encontro al dueño de la cuenta autenticad.");
                     
                 return StatusCode(200, response.data);
             }
