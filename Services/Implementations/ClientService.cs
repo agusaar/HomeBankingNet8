@@ -72,12 +72,12 @@ namespace HomeBankingNet8.Services.Implementations
                 //Inicio Create acc
                 var response = FindByEmail(signUpDto.Email);
                 if (response.statusCode == 404)
-                    return new Response<ClientDTO>(null, 404);
+                    return new Response<ClientDTO>(null, 404); //No encuentro el cliente recien creado
                 else
                 {
                     var accounts = _accountRepository.GetAccountsByClient(response.data.Id);
                     if (accounts.Count() >= 3)
-                        return new Response<ClientDTO>(null, 403);
+                        return new Response<ClientDTO>(null, 403); //El cliente nuevo supera el limite de cuentas. No tendria sentido.
                     else
                     {
                         Boolean existeAccNum = true;

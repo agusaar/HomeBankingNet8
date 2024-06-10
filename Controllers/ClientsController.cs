@@ -88,12 +88,12 @@ namespace HomeBankingNet8.Controllers
 
                 if (response.statusCode == 200)
                     return Created("", response.data);
-                else if (response.statusCode == 403)
-                    return StatusCode(403, "datos invalidos");
+                else if (response.statusCode == 400)
+                    return StatusCode(400, "datos invalidos");
                 else if (response.statusCode == 409)
                     return StatusCode(409, "El mail esta en uso.");
                 else
-                    return StatusCode(500, "Error al crear la cuenta");
+                    return StatusCode(500, "Error al crear la cuenta"); //Por si recibo un 404 o 403, no tendria sentido
             }
             catch (Exception ex)
             {
