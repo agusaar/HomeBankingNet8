@@ -53,7 +53,7 @@ namespace HomeBankingNet8.Services.Implementations
                 AccountId = fromAccount.Id,
                 Amount = transferDTO.Amount * (-1),
                 Date = DateTime.Now,
-                Description = transferDTO.Description+" Enviado a: "+toAccount.Number,
+                Description = transferDTO.Description+" || Enviado a: "+toAccount.Number,
                 Type = TransactionType.DEBIT
             };
 
@@ -64,7 +64,7 @@ namespace HomeBankingNet8.Services.Implementations
                 AccountId = toAccount.Id,
                 Amount = transferDTO.Amount,
                 Date = DateTime.Now,
-                Description = transferDTO.Description + " De: "+fromAccount.Number,
+                Description = transferDTO.Description + " || Recibido de: "+fromAccount.Number,
                 Type = TransactionType.CREDIT
             };
 
@@ -80,21 +80,20 @@ namespace HomeBankingNet8.Services.Implementations
         }
 
 
-
-            public List<TransactionDTO> GetAllTransactions()
+        public List<TransactionDTO> GetAllTransactions()
+        {
+            try
             {
-                try
-                {
-                    var transactions = _transactionRepository.GetAllTransactions();
-                    var transactionsDTO = transactions.Select(tr => new TransactionDTO(tr)).ToList();
-                    return transactionsDTO;
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
+                var transactions = _transactionRepository.GetAllTransactions();
+                var transactionsDTO = transactions.Select(tr => new TransactionDTO(tr)).ToList();
+                return transactionsDTO;
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public Response<TransactionDTO> GetTransactionById(long TransactionId)
         {
