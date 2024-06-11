@@ -21,62 +21,88 @@ namespace HomeBankingNet8.Services.Implementations
         }
         public Response<TransactionDTO> CreateTransaction(TransferDTO transferDTO, string currentUserEmail)
         {
-            if (transferDTO.FromAccountNumber.IsNullOrEmpty() || transferDTO.ToAccountNumber.IsNullOrEmpty()
-                || transferDTO.Description.IsNullOrEmpty() || transferDTO.Amount <= 0)
-                return new Response<TransactionDTO>(null, 401); //Bad Request
+            try
+            {
+                if (transferDTO.FromAccountNumber.IsNullOrEmpty() || transferDTO.ToAccountNumber.IsNullOrEmpty()
+                    || transferDTO.Description.IsNullOrEmpty() || transferDTO.Amount <= 0)
+                    return new Response<TransactionDTO>(null, 401); //Bad Request
             
-            if (currentUserEmail == string.Empty)
-                return new Response<TransactionDTO>(null, 402); //No hay usuario loggeado
+                if (currentUserEmail == string.Empty)
+                    return new Response<TransactionDTO>(null, 402); //No hay usuario loggeado
 
-            if (string.Equals(transferDTO.FromAccountNumber, transferDTO.ToAccountNumber))
-                return new Response<TransactionDTO>(null, 403); //Igual cuenta de origen y destino
+                if (string.Equals(transferDTO.FromAccountNumber, transferDTO.ToAccountNumber))
+                    return new Response<TransactionDTO>(null, 403); //Igual cuenta de origen y destino
 
-            Account fromAccount = _accountRepository.FindByAccountNumber(transferDTO.FromAccountNumber);
-            if (fromAccount == null)
-                return new Response<TransactionDTO>(null, 404); //From account Not Found
+                Account fromAccount = _accountRepository.FindByAccountNumber(transferDTO.FromAccountNumber);
+                if (fromAccount == null)
+                    return new Response<TransactionDTO>(null, 404); //From account Not Found
 
-            Client fromClient = _clientRepository.FindById(fromAccount.ClientId);
-            if (fromClient == null)
-                return new Response<TransactionDTO>(null, 500); //No se encontro el dueño de la cuenta, no puede no tener dueño -> internal server error
-            if (!string.Equals(fromClient.Email, currentUserEmail))
-                return new Response<TransactionDTO>(null, 405); //Unauthorized, no esta logeado
+                Client fromClient = _clientRepository.FindById(fromAccount.ClientId);
+                if (fromClient == null)
+                    return new Response<TransactionDTO>(null, 500); //No se encontro el dueño de la cuenta, no puede no tener dueño -> internal server error
+                if (!string.Equals(fromClient.Email, currentUserEmail))
+                    return new Response<TransactionDTO>(null, 405); //Unauthorized, no esta logeado
 
-            Account toAccount = _accountRepository.FindByAccountNumber(transferDTO.ToAccountNumber);
-            if (toAccount == null)
-                return new Response<TransactionDTO>(null, 406); //To account Not Found
+                Account toAccount = _accountRepository.FindByAccountNumber(transferDTO.ToAccountNumber);
+                if (toAccount == null)
+                    return new Response<TransactionDTO>(null, 406); //To account Not Found
 
-            if (fromAccount.Balance < transferDTO.Amount)
-                return new Response<TransactionDTO>(null, 407); //No hay saldo suficiente. Revisar
+                if (fromAccount.Balance < transferDTO.Amount)
+                    return new Response<TransactionDTO>(null, 407); //No hay saldo suficiente. Revisar
 
-            Transaction fromTransaction = new Transaction
+                Transaction fromTransaction = RealizarMovimientos(transferDTO, currentUserEmail, fromAccount, toAccount);
+
+                return new Response<TransactionDTO>(new TransactionDTO(fromTransaction), 200);
+            }
+            catch (Exception)
             {
-                AccountId = fromAccount.Id,
-                Amount = transferDTO.Amount * (-1),
-                Date = DateTime.Now,
-                Description = transferDTO.Description+" || Enviado a: "+toAccount.Number,
-                Type = TransactionType.DEBIT
-            };
 
-            _transactionRepository.Save(fromTransaction);
+                throw;
+            }
+        }
 
-            Transaction toTransaction = new Transaction
+        private Transaction RealizarMovimientos(TransferDTO transferDTO, string currentUserEmail,Account fromAccount,Account toAccount)
+        {
+            using var DBTransaction = _transactionRepository.BeginTransaction();
+            try
             {
-                AccountId = toAccount.Id,
-                Amount = transferDTO.Amount,
-                Date = DateTime.Now,
-                Description = transferDTO.Description + " || Recibido de: "+fromAccount.Number,
-                Type = TransactionType.CREDIT
-            };
+                Transaction fromTransaction = new Transaction
+                {
+                    AccountId = fromAccount.Id,
+                    Amount = transferDTO.Amount * (-1),
+                    Date = DateTime.Now,
+                    Description = transferDTO.Description+" || Enviado a: "+toAccount.Number,
+                    Type = TransactionType.DEBIT
+                };
 
-            _transactionRepository.Save(toTransaction);
+                _transactionRepository.Save(fromTransaction);
 
-            fromAccount.Balance -= transferDTO.Amount;
-            toAccount.Balance += transferDTO.Amount;
+                Transaction toTransaction = new Transaction
+                {
+                    AccountId = toAccount.Id,
+                    Amount = transferDTO.Amount,
+                    Date = DateTime.Now,
+                    Description = transferDTO.Description + " || Recibido de: "+fromAccount.Number,
+                    Type = TransactionType.CREDIT
+                };
 
-            _accountRepository.Save(fromAccount);
-            _accountRepository.Save(toAccount);
+                _transactionRepository.Save(toTransaction);
 
-            return new Response<TransactionDTO>(new TransactionDTO(fromTransaction), 200);
+                fromAccount.Balance -= transferDTO.Amount;
+                toAccount.Balance += transferDTO.Amount;
+
+                _accountRepository.Save(fromAccount);
+                _accountRepository.Save(toAccount);
+
+                DBTransaction.Commit();
+                return fromTransaction;
+            }
+            catch (Exception)
+            {
+                DBTransaction.Rollback();
+                throw;
+            }
+            
         }
 
 

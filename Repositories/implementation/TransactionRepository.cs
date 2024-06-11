@@ -1,12 +1,18 @@
 ﻿using HomeBankingNet8.Models;
 using HomeBankingNet8.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HomeBankingNet8.Repositories.implementation
 {
     public class TransactionRepository:RepositoryBase<Transaction>, ITransactionRepository
     {
         public TransactionRepository(HomeBankingContext repositoryContext) : base(repositoryContext) { }
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            return RepositoryContext.Database.BeginTransaction();
+        }
 
         public Transaction FindById(long id)
         {

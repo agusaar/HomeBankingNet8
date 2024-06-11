@@ -1,4 +1,5 @@
 ﻿using HomeBankingNet8.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HomeBankingNet8.Repositories.Interfaces
 {
@@ -7,5 +8,6 @@ namespace HomeBankingNet8.Repositories.Interfaces
         IEnumerable<Transaction> GetAllTransactions();
         Transaction FindById(long id);
         void Save(Transaction transaction);
+        IDbContextTransaction BeginTransaction();
     }
 }

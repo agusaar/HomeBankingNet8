@@ -1,5 +1,6 @@
 ﻿using HomeBankingNet8.Models;
 using HomeBankingNet8.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HomeBankingNet8.Repositories.implementation
 {
@@ -21,6 +22,11 @@ namespace HomeBankingNet8.Repositories.implementation
         {
             Create(loan);
             SaveChanges();
+        }
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            return RepositoryContext.Database.BeginTransaction();
         }
     }
 }
