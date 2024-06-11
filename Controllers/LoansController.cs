@@ -50,7 +50,7 @@ namespace HomeBankingNet8.Controllers
                 if (response.statusCode == 405)
                     return StatusCode(403, "Forbidden. La cuenta destino no existe.");
                 if (response.statusCode == 406)
-                    return StatusCode(403, "Forbidden. La cuenta origen no pertenece al cliente autenticado.");
+                    return StatusCode(403, "Forbidden. La cuenta no pertenece al cliente autenticado.");
                 if (response.statusCode == 407)
                     return StatusCode(403, "Forbidden. La cantidad de cuotas no está disponible para el préstamo solicitado .");
 

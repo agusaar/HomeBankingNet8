@@ -20,9 +20,9 @@ namespace HomeBankingNet8.Controllers
         private readonly ICardService _cardService;
         public ClientsController(IClientService clientService, IAccountService accountService, ICardService cardService)
         {
-           _clientService = clientService;
-           _accountService = accountService;
-           _cardService = cardService;
+            _clientService = clientService;
+            _accountService = accountService;
+            _cardService = cardService;
         }
 
         [HttpGet]
@@ -60,15 +60,16 @@ namespace HomeBankingNet8.Controllers
 
         [HttpGet("current")]
         [Authorize(Policy = "ClientOnly")]
-        public IActionResult GetCurrent() {
+        public IActionResult GetCurrent()
+        {
             try
             {
                 string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
                 var response = _clientService.FindByEmail(email);
 
-                if(response.statusCode == 403)
+                if (response.statusCode == 403)
                     return StatusCode(403, "Unauthorized Capo");
-                else if(response.statusCode == 404)
+                else if (response.statusCode == 404)
                     return NotFound();
                 else
                     return Ok(new ClientDTO(response.data));
@@ -91,7 +92,7 @@ namespace HomeBankingNet8.Controllers
                 else if (response.statusCode == 400)
                     return StatusCode(400, "datos invalidos");
                 else if (response.statusCode == 409)
-                    return StatusCode(409, "El mail esta en uso.");
+                    return StatusCode(403, "Forbidden. El mail esta en uso.");
                 else
                     return StatusCode(500, "Error al crear la cuenta"); //Por si recibo un 404 o 403, no tendria sentido
             }
@@ -105,29 +106,44 @@ namespace HomeBankingNet8.Controllers
         [Authorize(Policy = "ClientOnly")]
         public IActionResult newAccount()
         {
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            var res = _accountService.CreateAccount(email);
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                var res = _accountService.CreateAccount(email);
 
-            if (res.statusCode == 403) 
-                return StatusCode(403, "Se llego al limite de cuentas");
-            else
-                if (res.statusCode == 401)
+                if (res.statusCode == 403)
+                    return StatusCode(403, "Se llego al limite de cuentas");
+                else
+                    if (res.statusCode == 401)
                     return StatusCode(401, "Unauthorized");
                 else
                     return Created("", res.data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("current/accounts")]
         [Authorize(Policy = "ClientOnly")]
         public IActionResult getAccounts()
         {
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            var res = _accountService.GetAccountsByCLient(email);
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                var res = _accountService.GetAccountsByCLient(email);
 
-            if(res.statusCode == 200)
-                return StatusCode(200, res.data);
+                if (res.statusCode == 200)
+                    return StatusCode(200, res.data);
 
-            return StatusCode(404, "Cliente no encontrado");
+                return StatusCode(500, "No se encontro el cliente autenticado");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
         }
 
 
@@ -136,17 +152,45 @@ namespace HomeBankingNet8.Controllers
         [Authorize(Policy = "ClientOnly")]
         public IActionResult newCard(NewCardDTO newCardDto)
         {
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            var response = _cardService.CreateNewCard(newCardDto,email);
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                var response = _cardService.CreateNewCard(newCardDto, email);
 
-            if (response.statusCode == 401)
-                return StatusCode(401, "Unauthorized");
-            else if (response.statusCode == 403)
-                return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
-            else if (response.statusCode == 404)
-                return StatusCode(404, "Cliente no encontrado");
-            else
-                return Created("", response.data);
+                if (response.statusCode == 401)
+                    return StatusCode(401, "Unauthorized");
+                else if (response.statusCode == 403)
+                    return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
+                else if (response.statusCode == 404)
+                    return StatusCode(500, "No se encontro el cliente autenticado.");
+                else
+                    return Created("", response.data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("current/cards")]
+        [Authorize(Policy = "ClientOnly")]
+        public IActionResult getCurrentCards()
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                var res = _cardService.GetCardsByClient(email);
+
+                if (res.statusCode == 200)
+                    return StatusCode(200, res.data);
+
+                return StatusCode(500, "No se encontro el cliente autenticado");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

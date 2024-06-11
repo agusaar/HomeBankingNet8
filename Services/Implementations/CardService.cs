@@ -1,8 +1,10 @@
 ﻿using HomeBankingNet8.DTOs;
 using HomeBankingNet8.Models;
+using HomeBankingNet8.Repositories.implementation;
 using HomeBankingNet8.Repositories.Interfaces;
 using HomeBankingNet8.Services.Interfaces;
 using HomeBankingNet8.Utils;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace HomeBankingNet8.Services.Implementations
 {
@@ -82,6 +84,24 @@ namespace HomeBankingNet8.Services.Implementations
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public Response<List<CardDTO>> GetCardsByClient(string email)
+        {
+            try
+            {
+                Client client = _clientRepository.FindByEmail(email);
+                if (client == null)
+                    return new Response<List<CardDTO>>(null, 404);
+
+                var cards = _cardRepository.FindByClientId(client.Id);
+                return new Response<List<CardDTO>>(cards.Select(card => new CardDTO(card)).ToList(), 200);
+
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
