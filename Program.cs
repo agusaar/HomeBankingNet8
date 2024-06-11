@@ -18,12 +18,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<HomeBankingContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("HomeBankingConexion")));
 
-/*builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
-        {
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-            options.LoginPath = new PathString("/index.html");
-        });*/
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -31,7 +26,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                    "ContraseñaAgustinRojasBootcampDotNetMindHub2024MarianitoMarianitoMarianito")),
+                    builder.Configuration["Jwt:SecretKey"])),
             ValidateIssuer = false,
             ValidateAudience = false
         };

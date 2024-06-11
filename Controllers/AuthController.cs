@@ -18,11 +18,13 @@ namespace HomeBankingNet8.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IClientRepository _clientRepository;
+        private readonly IClientRepository _clientRepository;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IClientRepository clientRepository)
+        public AuthController(IClientRepository clientRepository, IConfiguration configuration)
         {
             _clientRepository = clientRepository;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -44,7 +46,7 @@ namespace HomeBankingNet8.Controllers
                     claims.Add(new Claim("Client", user.Email));
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                    "ContraseñaAgustinRojasBootcampDotNetMindHub2024MarianitoMarianitoMarianito"));
+                    _configuration["Jwt:SecretKey"]));
 
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
                 var token = new JwtSecurityToken(
@@ -53,14 +55,6 @@ namespace HomeBankingNet8.Controllers
                                        signingCredentials: cred
                 );
                 var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-                
-                /*var claimsIdentity = new ClaimsIdentity(
-                    claims,
-                    JwtBearerDefaults.AuthenticationScheme);
-
-                await HttpContext.SignInAsync(
-                    JwtBearerDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));*/
 
                 return Ok(jwt);
             }
