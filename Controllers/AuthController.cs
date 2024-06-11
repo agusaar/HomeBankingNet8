@@ -48,7 +48,7 @@ namespace HomeBankingNet8.Controllers
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
                     _configuration["Jwt:SecretKey"]));
 
-                var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+                var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
                 var token = new JwtSecurityToken(
                                        claims: claims,
                                        expires: DateTime.Now.AddMinutes(10),
