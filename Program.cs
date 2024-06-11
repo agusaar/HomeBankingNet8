@@ -24,13 +24,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
                     builder.Configuration["Jwt:SecretKey"])),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ValidateIssuer = false, //Que no valide quien lo emitio
+            ValidateAudience = false, //Que no valide para quien fue emitido
+            ValidateLifetime = true, //Que valide expiration date
+            ClockSkew = TimeSpan.Zero //Tolerancia
         };
     });
 
