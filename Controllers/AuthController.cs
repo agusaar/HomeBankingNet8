@@ -2,8 +2,12 @@
 using HomeBankingNet8.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -39,15 +43,26 @@ namespace HomeBankingNet8.Controllers
                 else
                     claims.Add(new Claim("Client", user.Email));
 
-                var claimsIdentity = new ClaimsIdentity(
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                    "ContraseñaAgustinRojasBootcampDotNetMindHub2024MarianitoMarianitoMarianito"));
+
+                var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+                var token = new JwtSecurityToken(
+                                       claims: claims,
+                                       expires: DateTime.Now.AddMinutes(10),
+                                       signingCredentials: cred
+                );
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+                
+                /*var claimsIdentity = new ClaimsIdentity(
                     claims,
-                    CookieAuthenticationDefaults.AuthenticationScheme);
+                    JwtBearerDefaults.AuthenticationScheme);
 
                 await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
+                    JwtBearerDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));*/
 
-                return Ok();
+                return Ok(jwt);
             }
             catch (Exception ex) {
                 return StatusCode(500, ex.Message);
@@ -80,5 +95,6 @@ namespace HomeBankingNet8.Controllers
                 return hash == passwordHasheada;
             }
         }
+
     }
 }
