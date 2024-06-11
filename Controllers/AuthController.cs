@@ -28,7 +28,7 @@ namespace HomeBankingNet8.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] ClientLoginDTO client) 
+        public IActionResult Login([FromBody] ClientLoginDTO client) 
         {
             try
             {
@@ -65,12 +65,10 @@ namespace HomeBankingNet8.Controllers
         }
 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             try
             {
-                await HttpContext.SignOutAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme);
                 return Ok();
             }
             catch (Exception ex)
