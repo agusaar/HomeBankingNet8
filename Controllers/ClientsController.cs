@@ -139,7 +139,9 @@ namespace HomeBankingNet8.Controllers
             string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
             var response = _cardService.CreateNewCard(newCardDto,email);
 
-            if (response.statusCode == 401)
+            if (response.statusCode == 400)
+                return StatusCode(400, "Faltan campos o campos invalidos");
+            else if (response.statusCode == 401)
                 return StatusCode(401, "Unauthorized");
             else if (response.statusCode == 403)
                 return StatusCode(403, "Forbidden. Ya tiene el numero maximo de tarjetas del tipo " + newCardDto.Type);
