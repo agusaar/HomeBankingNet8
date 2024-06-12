@@ -157,6 +157,8 @@ namespace HomeBankingNet8.Controllers
                 string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
                 var response = _cardService.CreateNewCard(newCardDto, email);
 
+                if (response.statusCode == 400)
+                    return StatusCode(400, "Bad request. Debe completar todos los campos.");
                 if (response.statusCode == 401)
                     return StatusCode(401, "Unauthorized");
                 else if (response.statusCode == 403)

@@ -4,6 +4,7 @@ using HomeBankingNet8.Repositories.implementation;
 using HomeBankingNet8.Repositories.Interfaces;
 using HomeBankingNet8.Services.Interfaces;
 using HomeBankingNet8.Utils;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace HomeBankingNet8.Services.Implementations
@@ -23,7 +24,9 @@ namespace HomeBankingNet8.Services.Implementations
         {
             try
             {
-                if(email == string.Empty)
+                if (newCardDTO.Color.IsNullOrEmpty() || newCardDTO.Type.IsNullOrEmpty())
+                    return new Response<CardDTO>(null, 400);
+                if (email == string.Empty)
                     return new Response<CardDTO>(null, 401);
 
                 Client ownerClient = _clientRepository.FindByEmail(email);
