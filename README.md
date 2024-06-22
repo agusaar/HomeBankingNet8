@@ -8,7 +8,7 @@ Este proyecto es un backend desarrollado en .NET 8 para un aplicacion web de Hom
 
 - Autenticacion por cookies y opcionalmente JWT.
 - Integracion con SQLServer por medio de EFC.
-- Frontend provisto por Mind Hub (Html, css y JavaScript).
+- Frontend provisto por Mind Hub (Vue, Html y css).
 
 ## Tecnologias
 
